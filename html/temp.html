@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <style>
+        html {
+  font-family: verdana;
+  font-size: 10pt;
+  line-height: 25px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 300px;
+  overflow-x: scroll;
+  display: block;
+}
+
+thead {
+  background-color: #EFEFEF;
+}
+
+thead,
+tbody {
+  display: block;
+}
+
+tbody {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 500px;
+}
+
+td,
+th {
+  min-width: 200px;
+  height: 25px;
+  border: dashed 1px lightblue;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  max-height: 25px;
+  white-space: nowrap ;
+}
+tr:hover {
+  background: gray;
+}
+
+
+/* --------- */
+.dropbtn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+  background-color: #3e8e41;
+}
+
+#myInput {
+  box-sizing: border-box;
+  background-image: url('searchicon.png');
+  background-position: 14px 12px;
+  background-repeat: no-repeat;
+  font-size: 16px;
+  padding: 14px 20px 12px 45px;
+  border: none;
+  border-bottom: 1px solid #ddd;
+}
+
+#myInput:focus {outline: 3px solid #ddd;}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f6f6f6;
+  min-width: 230px;
+  overflow: auto;
+  border: 1px solid #ddd;
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown a:hover {background-color: #ddd;}
+
+.show {display: block;}
+    </style>
+    <title>Book Inventor</title>
+  </head>
+  <body>
+    <div class="container-fluid">
+        <div class="row ml-3 mr-3 mt-3 mb-3">
+            <iframe id="txtArea1" style="display:none"></iframe>
+
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                <div
+                  class="card text-white bg-primary mb-2 mr-1"
+                  style="text-align: center; width: 100%; height: 90%;">
+    
+                <!-- total order card -->
+                  <div class="card-header font-weight-bold">Search Any Book</div>
+                  <div class="card-body">
+    
+                    <!-- <h4 class="card-title" id="ototalAmount">0</h4> -->
+                    <div class="dropdown">
+                        <label class="mt-3 ml-3">Enter Book Name, Author Name, Publisher Name to search</label>
+                        <input id="input" type="text" class="form-control ml-3" placeholder="Search" aria-label="search" aria-describedby="button-addon2">
+                        <button id="myBtn" class="invisible" onclick="">Button</button>
+                        <div id="myDropdown" class="input-group mb-3 ml-3 mt-1 dropdown-content">
+                        </div>
+                      </div>
+                      <div class="dropdown">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-6 col-lg-4">
+                <div
+                  class="card text-white bg-success mb-2 mr-1"
+                  style="text-align: center; width: 100%; height: 90%;">
+    
+                <!-- total order card -->
+                  <div class="card-header font-weight-bold">Books Without Image</div>
+                  <div class="card-body">
+    
+                    <!-- <h4 class="card-title" id="ototalAmount">0</h4> -->
+                    <button type="button" id="showAllWithoutImage" class="btn btn-warning" onclick="ShowAllWitoutImageBooks();">Show All Without Image Books</button>
+
+                    </div>
+                  </div>
+              </div>
+              <div class="col-sm-12 col-md-6 col-lg-4">
+                <div
+                  class="card text-white bg-info mb-2 mr-1"
+                  style="text-align: center; width: 100%; height: 90%;">
+    
+                <!-- total order card -->
+                  <div class="card-header font-weight-bold">Quantity Management</div>
+                  <div class="card-body">
+    
+                    <!-- <h4 class="card-title" id="ototalAmount">0</h4> -->
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="limitLbl" placeholder="limit" aria-label="limit" aria-describedby="button-addon4">
+                        <div class="input-group-append" id="button-addon4">
+                          <button class="btn btn-warning" type="button" onclick="getSortedBooks('asc');">Asc</button>
+                          <button class="btn btn-warning" type="button" onclick="getSortedBooks('desc');">Desc</button>
+                        </div>
+                      </div>
+                      <button type="button" id="getExcelSheet" class="btn mt-2 btn-warning" onclick="fnExcelReport();">Get Excel Sheet</button>
+        
+                  </div>
+                    </div>
+                  
+              </div>
+    
+        
+        <div class="col-sm-12 col-md-12 mt-3">
+            <div class="table-responsive">
+              <table class="table" id="table2">
+                <thead>
+                  <tr>
+                    <th>isbn</th>
+                    <th>BookName</th>
+                    <th>Author</th>
+                    <th>Publisher</th>
+                    <th>Sale Price</th>
+                    <th>MRP</th>
+                    <th>Category</th>
+                    <th>MediumType</th>
+                    <th>Quantity</th>
+                    <th>Descriptions</th>
+                    <th>BookTags</th>
+                    <th>BookAbout</th>
+                    <th>Dimensions</th>
+                    <th>Edition</th>
+                    <th>Binding</th>
+                    <th>AboutAuthor</th>
+                    <th>AdditionalBookCode</th>
+                    <th>NumberOfPages</th>
+                    <th>Rating</th>
+                    <th>SaleCurrency</th>
+                    <th>Weight</th>
+                    <th>bookKey</th>
+                  </tr>
+                </thead>
+                <tbody id='tabledata'>
+                </tbody>
+              </table>
+              <div id="myModal" class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Details</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="container-fluid">
+                        <div class="container mt-3">
+                            <div class="row">
+                      
+                              <!-- First Column-->
+                              <div class="col-sm-12 col-md-6 col-lg-4">
+                                <form id="myForm">
+                              
+                                  <div class="form-group">
+                                    <label for="isbnlbl">ISBN</label>
+                                    <input type="text" class="form-control" id="isbnlbl" aria-describedby="emailHelp" placeholder="Enter isbn number" readonly>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="Authorlbl">Author</label>
+                                    <input type="text" class="form-control" id="Authorlbl" placeholder="Author Name" readonly>
+                                  </div>
+                      
+                                  <div class="form-group">
+                                    <label for="BookNamelbl">BookName</label>
+                                    <input type="text" class="form-control" id="BookNamelbl" placeholder="Book Name" required>
+                                  </div>
+                      
+                                  <div class="form-group">
+                                    <label for="EnterAuthorlbl">Publisher</label>
+                                    <input type="text" class="form-control" id="EnterAuthorlbl" placeholder="Publisher Name" required>
+                                  </div>
+                      
+                                  <div class="form-group">
+                                    <label for="MRPLbl">Sale Price</label>
+                                    <input type="number" class="form-control" id="MRPLbl" placeholder="Sale Price" required>
+                                  </div>
+                      
+                                  <div class="form-group">
+                                    <label for="discountlbl">Printed Price</label>
+                                    <input type="number" class="form-control" id="printedpricelbl" placeholder="Printed Price" required>
+                                  </div>
+                                  
+                      
+                                  <div class="form-group">
+                                    <label for="exampleFormControlTextarea1">Description</label>
+                                    <textarea class="form-control" id="DescriptionLbl" rows="3" required></textarea>
+                                  </div>
+                              </div>
+                              <!-- Second Column-->
+                              <div class="col-sm-12 col-md-6 col-lg-4">
+                                  <div class="form-group">
+                                    <label for="exampleFormControlSelect1">Category</label>
+                                    <input class="form-control" id="CategoryLbl" readonly>
+                                  </div>
+                                  
+                                  <div class="form-group">
+                                    <label for="exampleFormControlSelect1">Medium</label>
+                                    <input class="form-control" id="MediumLbl" readonly>
+                                  </div>
+                                  
+                      
+                                  <div class="form-group">
+                                    <label for="exampleInputPassword1">Number Of Pages</label>
+                                    <input type="number" class="form-control" id="EnterNumberPages" placeholder="Number Of Pages" required>
+                                  </div>
+                      
+                                  <div class="form-group">
+                                    <label for="exampleInputPassword1">Edition</label>
+                                    <input type="text" class="form-control" id="EditionLbl" placeholder="Edition" required>
+                                  </div>
+                      
+                                  <div class="form-group">
+                                    <label for="exampleInputPassword1">Book Tags</label>
+                                    <input type="text" class="form-control" id="BookTagsLbl" placeholder="Book Tags" required>
+                                  </div>
+                      
+                                  <div class="form-group">
+                                    <label for="exampleInputPassword1">Book About</label>
+                                    <input type="text" class="form-control" id="BookAboutLbl" placeholder="Book About" required>
+                                  </div>
+                                  
+                                  <div class="form-group">
+                                    <label for="exampleInputPassword1">About Author</label>
+                                    <input type="text" class="form-control" id="AboutAuthorLbl" placeholder="About Author" required>
+                                  </div>
+                      
+                                
+                                  <!-- <div class="form-group">
+                                    <label for="exampleFormControlFile1">Example file input</label>
+                                    <input type="file" class="form-control-file" id="ExampleFileInputLbl" required>
+                                  </div> -->
+                                  
+                              </div>
+                      
+                              <!-- Third Column-->
+                              <div class="col-sm-12 col-md-6 col-lg-4">
+                      
+                      
+                                  <div class="form-group">
+                                    <label for="exampleInputPassword1">Binding</label>
+                                    <input type="text" class="form-control" id="bindingLbl" placeholder="Binding" required>
+                                  </div>
+                      
+                                  <div class="form-group">
+                                    <label for="exampleInputPassword1">Dimensions</label>
+                                    <input type="text" class="form-control" id="DimensionsLbl" placeholder="Dimensions" required>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="WeightLbl">Weight</label>
+                                    <input type="text" class="form-control" id="WeightLbl" placeholder="Weight in grams" required>
+                                  </div>
+                      
+                                  <div class="form-group">
+                                    <label for="QuantityLbl">Quantity</label>
+                                    <input type="number" class="form-control" id="QuantityLbl" placeholder="Quantity" required>
+                                  </div>
+                      
+                                  <div class="form-group">
+                                    <label for="QuantityLbl">Additional Book Code</label>
+                                    <input type="text" class="form-control" id="AdditionalBookCodeLBL" placeholder="Additional Book Code" required>
+                                  </div>
+                      
+                                  <div class="form-group">
+                                    <label for="exampleFormControlSelect1">Sale Currency</label>
+                                    <select class="form-control" id="SaleCurrencyLbl" required>
+                                      <option>Rs</option>
+                                      <option>£</option>
+                                      <option>$</option>
+                                    </select>
+                                  </div>            
+                                
+                                </form>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="form-group mt-2">
+                                <img id="myImg" width="70" height="100">
+                                <!-- <label for="exampleFormControlFile1">Select item's Image</label> -->
+                                <input type="file" class="form-control-file" id="image">
+                             </div>
+                        
+                              </div>
+                              <div class="row">
+                                  <button type="button" class="mb-3 btn btn-primary btn-lg btn-block" id="submitBtn" onclick="submitBtnClick();">Submit</button>  
+                              </div>
+                                  </div>
+                    </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/6.2.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.1.0/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/linways/table-to-excel@v1.0.4/dist/tableToExcel.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/6.2.3/firebase-storage.js"></script>
+     
+    <script>
+        let url = 'https://akashpustaksadan.com/app/';
+
+        function dec2hex(dec) {
+            return ('0' + dec.toString(16)).substr(-2);
+        }
+        function generateId() {
+            var arr = new Uint8Array((20 || 40) / 2);
+            window.crypto.getRandomValues(arr);
+            return Array.from(arr, dec2hex).join('');
+        }
+
+        
+        //------FIREBASE INIT-----//
+        var firebaseConfig = {
+            apiKey: 'AIzaSyDLHJgHbo8HIyJ7zicUk_Xur_YZ9c7fEGY',
+            authDomain: 'akashonlinebooks-9c293.firebaseapp.com',
+            databaseURL: 'https://akashonlinebooks-9c293.firebaseio.com',
+            projectId: 'akashonlinebooks-9c293',
+            storageBucket: 'akashonlinebooks-9c293.appspot.com',
+            messagingSenderId: '639034965039',
+            appId: '1:639034965039:web:0b634730886381f0'
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        var firebaseRef = firebase.database().ref().child('BooksDetail');
+
+
+        //-----INITIALIZE ALL VARIABLE------//
+        var isbn,
+	Author,
+	BookName,
+	Publisher,
+	MRP,
+	PrintedPrice,
+	Description,
+	Category,
+	Medium,
+	NumberOfPages,
+	Edition,
+	BookTags,
+	BookAbout,
+	AboutAuthor,
+	Binding,
+	Dimensions,
+	Weight,
+	Quantity,
+	AdditionalBookCode,
+	bookKey,
+	rating,
+	SaleCurrency,
+	imageurl;
+var counter;
+isbn = document.getElementById('isbnlbl');
+Author = document.getElementById('Authorlbl');
+BookName = document.getElementById('BookNamelbl');
+Publisher = document.getElementById('EnterAuthorlbl');
+MRP = document.getElementById('MRPLbl');
+PrintedPrice = document.getElementById('printedpricelbl');
+Description = document.getElementById('DescriptionLbl');
+Category = document.getElementById('CategoryLbl');
+Medium = document.getElementById('MediumLbl');
+NumberOfPages = document.getElementById('EnterNumberPages');
+Edition = document.getElementById('EditionLbl');
+BookTags = document.getElementById('BookTagsLbl');
+BookAbout = document.getElementById('BookAboutLbl');
+AboutAuthor = document.getElementById('AboutAuthorLbl');
+Binding = document.getElementById('bindingLbl');
+Dimensions = document.getElementById('DimensionsLbl');
+Weight = document.getElementById('WeightLbl');
+Quantity = document.getElementById('QuantityLbl');
+AdditionalBookCode = document.getElementById('AdditionalBookCodeLBL');
+imageurl = document.getElementById('imageurlLbl');
+SaleCurrency = document.getElementById('SaleCurrencyLbl');
+var categorySel = document.getElementById('CategoryLbl');
+var html_first = '';
+
+
+
+
+
+
+        //--------TABLE SCROLL-----------//
+        $('table').on('scroll', function() {
+        $("#" + this.id + " > *").width($(this).width() + $(this).scrollLeft());
+        });
+        
+        document.getElementById("myDropdown").classList.toggle("show");//set visibility of suggetions
+        
+        //--------On Text Change Listener From Input-----------//  
+        $("#input").on("input", function(e) {
+            var input = $(this);
+            var val = input.val();
+            if (input.data("lastval") != val) {
+                input.data("lastval", val);
+                if(val==""){
+                    document.getElementById("myDropdown").innerHTML = "";
+                }else{
+                    getSearchResult(val);
+                }
+                
+            }
+
+        });
+        var xhttp = new XMLHttpRequest();
+        //--------GET SEARCH SUGGETIONS-----------//  
+        function getSearchResult(txt){ 
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                let html = '';
+                var obj = JSON.parse(xhttp.responseText);
+                for(var i = 0; i < obj.length; i++) {
+                    html+= "<a href=\"javascript:getResultData('" + obj[i]['searchResult'] + "');\">" + obj[i]['searchResult'] + "</a>";
+                }
+                document.getElementById("myDropdown").innerHTML = html;
+                }
+            };
+            xhttp.open("GET", url+"bookDetails/search/?searchKey="+txt, true);
+            xhttp.send();
+        }
+            
+        //--------GET SEARCH RESULT-----------//  
+        function getResultData(val){
+            var inputF = document.getElementById("input"); 
+            document.getElementById("myDropdown").innerHTML = "";
+            inputF.value = val;
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    setUpData(xhttp.responseText)
+                }
+            };
+            xhttp.open("GET",  url+"bookDetails/searchResult/?searchKey="+val, true);
+            xhttp.send();
+        }
+
+        //--------SETUP TABLE DATA------//
+
+        function setUpData(val){
+            let tablehtml = '';
+                var tableobj = JSON.parse(val);
+                for(var i = 0; i < tableobj.length; i++) {
+                    tablehtml+= '<tr onclick="javascript:getSingleBookDetails(\''+tableobj[i]['bookKey']+'\')"><td>'+tableobj[i]['isbn']+'</td><td>'+tableobj[i]['BookName']+'</td><td>'+tableobj[i]['Author']+'</td><td>'+tableobj[i]['Publisher']+'</td><td>'+tableobj[i]['MRP']+'</td><td>'+tableobj[i]['actualCost']+'</td><td>'+tableobj[i]['Category']+'</td><td>'+tableobj[i]['MediumType']+'</td><td>'+tableobj[i]['Quantity']+'</td><td>'+tableobj[i]['Descriptions']+'</td><td>'+tableobj[i]['BookTags']+'</td><td>'+tableobj[i]['BookAbout']+'</td><td>'+tableobj[i]['Dimensions']+'</td><td>'+tableobj[i]['Edition']+'</td><td>'+tableobj[i]['Binding']+'</td><td>'+tableobj[i]['AboutAuthor']+'</td><td>'+tableobj[i]['AdditionalBookCode']+'</td><td>'+tableobj[i]['NumberOfPages']+'</td><td>'+tableobj[i]['Rating']+'</td><td>'+tableobj[i]['SaleCurrency']+'</td><td>'+tableobj[i]['Weight']+'</td><td>'+tableobj[i]['bookKey']+'</td></tr>';
+                }
+                document.getElementById("tabledata").innerHTML = tablehtml;
+        }
+
+        //--------ON ENTER KEY PRESS LISTENER-----------//  
+        var input = document.getElementById("input");
+        input.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("myBtn").click();
+            getResultData(document.getElementById("input").value);
+        }
+        });
+
+        //--------ON TABLE ROW CLICK LISTENER-----------//  
+        function getSingleBookDetails(val){
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    setDataToModel(xhttp.responseText);
+                    $('#myModal').modal('show');
+                }
+            };
+            xhttp.open("GET",  url+"bookDetails/bookKey/?bookKey="+val, true);
+            xhttp.send();
+        }
+
+        function setDataToModel(val){
+          console.log(val);
+          var details = JSON.parse(val);
+            isbn.value = details[0]['isbn'];
+            Category.value = details[0]['Category'];
+            Author.value = details[0]['Author'];
+            BookName.value = details[0]['BookName'];
+            Publisher.value = details[0]['Publisher'];
+            MRP.value = details[0]['MRP'];
+            Quantity.value = details[0]['Quantity'];
+            AdditionalBookCode.value = details[0]['AdditionalBookCode'];
+            PrintedPrice.value = details[0]['actualCost'];
+            Description.value = details[0]['Descriptions'];
+            Medium.value = details[0]['Medium'];
+            NumberOfPages.value = details[0]['NumberOfPages'];
+            Edition.value = details[0]['Edition'];
+            BookTags.value = details[0]['BookTags'];
+            BookAbout.value = details[0]['BookAbout'];
+            AboutAuthor.value = details[0]['AboutAuthor'];
+            Binding.value = details[0]['Binding'];
+            Dimensions.value = details[0]['Dimensions'];
+            Weight.value = details[0]['Weight'];
+            bookKey = details[0]['bookKey'];
+            rating = details[0]['Quantity'];
+            document.getElementById("myImg").src = details[0]['Image'];
+            
+        }
+
+
+        //---------PROGRESS DIALOG----------//
+        function showPleaseWait() {
+	if (document.querySelector('#pleaseWaitDialog') == null) {
+		var modalLoading =
+			'<div class="modal" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false" role="dialog">\
+            <div class="modal-dialog">\
+                <div class="modal-content">\
+                    <div class="modal-header">\
+                        <h4 class="modal-title">Please wait...</h4>\
+                    </div>\
+                    <div class="modal-body">\
+                        <div class="progress">\
+                          <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar"\
+                          aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%; height: 40px">\
+                          </div>\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>\
+        </div>';
+		$(document.body).append(modalLoading);
+	}
+
+	$('#pleaseWaitDialog').modal('show');
+}
+function hidePleaseWait() {
+	$('#pleaseWaitDialog').modal('hide');
+}
+
+//---------SEND DATA TO SERVER-----------//
+function sendReqToServer(route, method, params) {
+	return new Promise((resolve, reject) => {
+		$.ajax({
+			url: url + route,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			type: method /* or type:"GET" or type:"PUT" */,
+			dataType: 'json',
+			data: params,
+			success: function(result) {
+				resolve(result);
+			},
+			error: function() {
+				console.log('error');
+				reject('error');
+			}
+		});
+	});
+}
+
+async function submitBtnClick() {
+	 document.getElementById('submitBtn').disabled = true;
+
+	if (
+		isbn.value != '' &&
+		Author.value != '' &&
+		BookName.value != '' &&
+		Publisher.value != '' &&
+		MRP.value != '' &&
+		PrintedPrice.value != '' &&
+		Description.value != '' &&
+		Category.value != '' &&
+		Medium.value != '' &&
+		NumberOfPages.value != '' &&
+		Edition.value != '' &&
+		BookTags.value != '' &&
+		BookAbout.value != '' &&
+		AboutAuthor.value != '' &&
+		Binding.value != '' &&
+		Dimensions.value != '' &&
+		Weight.value != '' &&
+		Quantity.value != '' &&
+		AdditionalBookCode.value != '' &&
+		SaleCurrency.value != ''
+	) {
+		//updating details
+
+		if (document.getElementById('image').files.length == 0) {
+            showPleaseWait();
+			let data = {
+						isbn: isbn.value,
+						Category: Category.value,
+						Author: Author.value,
+						BookName: BookName.value,
+						Publisher: Publisher.value,
+						MRP: MRP.value,
+						Quantity: Quantity.value,
+						AdditionalBookCode: AdditionalBookCode.value,
+						actualCost: PrintedPrice.value,
+						Descriptions: Description.value,
+						MediumType: Medium.value,
+						NumberOfPages: NumberOfPages.value,
+						Edition: Edition.value,
+						BookTags: BookTags.value,
+						BookAbout: BookAbout.value,
+						AboutAuthor: AboutAuthor.value,
+						Binding: Binding.value,
+						Dimensions: Dimensions.value,
+						Weight: Weight.value,
+						imgFlag: '0',
+						bookKey: bookKey,
+						Rating: rating
+					};
+
+					let result = await sendReqToServer('updateBookDetails', 'PUT', data);
+                    console.log(result+"----");
+					if (result == 1) {
+                        document.getElementById('submitBtn').disabled = false;
+						hidePleaseWait();
+						alert('Data updated');
+                        $('#myModal').modal('hide');
+						//location.reload();
+					} else {
+                        document.getElementById('submitBtn').disabled = false;
+						console.log(result);
+						hidePleaseWait();
+                        $('#myModal').modal('hide');
+						alert('An error occurred');
+					}
+		} else {
+			showPleaseWait();
+			var storageRef = firebase.storage().ref();
+			var ref = storageRef.child(generateId() + '.jpg');
+			//const file = document.getElementById('image').files[0];
+			const file = document.querySelector('#image').files[0];
+			const metadata = {
+				contentType: file.type
+			};
+			const task = ref.put(file, metadata);
+			task
+				.then((snapshot) => snapshot.ref.getDownloadURL())
+				.then(async (url) => {
+					console.log(url);
+					let data = {
+						isbn: isbn.value,
+						Category: Category.value,
+						Author: Author.value,
+						BookName: BookName.value,
+						Publisher: Publisher.value,
+						MRP: MRP.value,
+						Image: url,
+						Quantity: Quantity.value,
+						AdditionalBookCode: AdditionalBookCode.value,
+						actualCost: PrintedPrice.value,
+						Descriptions: Description.value,
+						MediumType: Medium.value,
+						NumberOfPages: NumberOfPages.value,
+						Edition: Edition.value,
+						BookTags: BookTags.value,
+						BookAbout: BookAbout.value,
+						AboutAuthor: AboutAuthor.value,
+						Binding: Binding.value,
+						Dimensions: Dimensions.value,
+						Weight: Weight.value,
+						imgFlag: '1',
+						bookKey: bookKey,
+						Rating: rating
+					};
+
+					let result = await sendReqToServer('updateBookDetails', 'PUT', data);
+					if (result == 1) {
+                        document.getElementById('submitBtn').disabled = false;
+						hidePleaseWait();
+						alert('Data updated');
+						$('#myModal').modal('hide');
+                        //location.reload();
+					} else {
+                        document.getElementById('submitBtn').disabled = false;
+						console.log(result);
+						hidePleaseWait();
+                        $('#myModal').modal('hide');
+						alert('An error occurred');
+					}
+				})
+				.catch(console.error);
+		}
+	} else {
+		alert('fill all fields');
+		// document.getElementById('submitBtn').disabled = false;
+	}
+}
+
+function ShowAllWitoutImageBooks() {
+    showPleaseWait();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                setUpData(xhttp.responseText);
+                hidePleaseWait();
+                }else{
+                    hidePleaseWait();
+                }
+            };
+            xhttp.open("GET",  url+"getAllWithoutImageBooks", true);
+            xhttp.send();
+}
+
+function getSortedBooks(val) {
+    let limit = document.getElementById("limitLbl").value;
+    if(limit!=""){
+        showPleaseWait();
+        xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                    setUpData(xhttp.responseText);
+                    hidePleaseWait();
+                    }else{
+                        hidePleaseWait();
+                    }
+
+                };
+                xhttp.open("GET",  url+"getSortedBookList/?order="+val+"&limit="+limit, true);
+                xhttp.send();
+    } else{
+        alert("Enter Limit")
+    }     
+}
+
+function fnExcelReport()
+    {
+        let table = document.getElementsByTagName("table");
+    TableToExcel.convert(table[0], { 
+        name: `export.xlsx`,
+        sheet: {
+        name: 'Sheet 1'
+        }
+    });
+}
+
+    </script>
+    <script>
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet"></link>
+
+    <title>Domain</title>
+  
+  </head>
+  <body>
+
+    <div class="fluid">
+        <div class="float-right mt-3 mb-3 mr-3">
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addDomainModel">Add Domain</button>
+        </div>
+        <div class="table-responsive text-nowrap">
+            <!--Table-->
+            <table class="table table-fixed">
+    
+              <!--Table head-->
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Delete</th>
+                </tr>
+              </thead>
+              <!--Table head-->
+    
+              <!--Table body-->
+              <tbody id='tabledata'>
+              </tbody>
+              <!--Table body-->
+
+            </table>
+            <!--Table-->
+          </div>
+    </section>
+
+          <!-- MODAL -->
+          <div id="addDomainModel" class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Add Domain</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="container-fluid">
+                    <div class="container mt-3">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label id='lblZone' class="btn btn-secondary">
+                              <input type="radio" name="options" id="buttonZone" checked>zone</label>
+                            <label id='lblDivision' class="btn btn-secondary">
+                              <input type="radio" name="options" id="buttonDivision">division</label>
+                            <label id='lblSection' class="btn btn-secondary">
+                              <input type="radio" name="options" id="buttonSection">section</label>
+                          </div>
+                        <input id="inputZone" type="text" class="form-control mt-3" placeholder="Zone" aria-label="search" aria-describedby="button-addon2" >
+                        <input id="inputDivision" type="text" class="form-control mt-3" placeholder="Division" aria-label="search" aria-describedby="button-addon2" disabled>
+                        <input id="inputSection" type="text" class="form-control mt-3 mb-3" placeholder="Section" aria-label="search" aria-describedby="button-addon2" disabled>
+                    
+                </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="addDomainClick();">Add Domain</button>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+    </div>
+    
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js" ></script>
+
+
+    <script>
+        
+
+       
+            // alert($(this).text())
+
+
+
+
+        //---------PROGRESS DIALOG----------//
+
+let url='http://49.50.67.152:8006/';
+let selectedType = 'zone';
+
+$('.btn-group .btn').click(function(){
+            selectedType = $(this).text().toString().trim();
+        });
+
+$('#addDomainModel').on('hidden.bs.modal', function () {
+  $('#inputZone').val('');
+  $('#inputDivision').val('');
+  $('#inputSection').val('');
+  $('#lblZone').addClass('active');
+  $("#lblDivision").removeClass("active");
+  $("#lblSection").removeClass("active");
+
+ 
+  selectedType = 'zone';
+})
+
+//------------LOAD ALL DOMAINS----------//
+getAllDomainFromServer();
+async function getAllDomainFromServer(){
+  showPleaseWait();
+  let result = await sendReqToServer('getAllDomain','POST',{type:"all"});
+  if(result.status === true){
+    loadAllDomains(result.data)  
+  }else{
+    loadDomains(selectedType,'-','-','-')
+  }
+  hidePleaseWait();
+}
+
+function loadAllDomains(val){
+  let tablehtml = '';
+  for(var i = 0; i < val.length; i++) {
+      tablehtml+= ` <tr><th scope="row">${i+1}</th><td>${val[i].name}</td><td>${val[i].type}</td><td><button type="button" onclick="deleteDomain('${val[i].idn}')" class="btn btn-danger">Delete</button>
+</td></tr>`;
+  }
+  document.getElementById("tabledata").innerHTML = tablehtml;
+
+}
+
+//-----------LOAD DOMAINS-----------//
+loadDomains(selectedType,'-','-','-')
+async function loadDomains(type,zone,division,section){
+  showPleaseWait();
+  let data = {
+    type:type,
+    zone:zone,
+    division:division,
+    section:section
+  }
+  let result = await sendReqToServer('getDomain','POST',data);
+  if(result.status === true){
+    readDomainData(result.data,type)
+  }else{
+    if(type == 'zone'){
+      $("inputZone").prop('disabled', false);
+    }
+    if(type == 'division'){
+      $('#inputDivision').removeAttr('disabled');
+    }
+    if(type == 'section'){
+      $('#inputSection').removeAttr('disabled');
+    }
+  }
+  hidePleaseWait();
+}
+
+function readDomainData(data,type){
+  var tempArray = [];
+  for(var i = 0; i < data.length; i++) {
+    tempArray.push(data[i].name);
+  }
+  if(type == 'zone'){
+    $("#inputZone").autocomplete({
+    source: tempArray,
+    appendTo : "#addDomainModel",
+    select: function() {
+
+      if(selectedType!='zone'){
+        loadDomains('division',$('#inputZone').val(),'-','-');
+      }
+      }
+  });
+  }
+  if(type == 'division'){
+    $("#inputDivision").prop('disabled', false);
+    $("#inputDivision").autocomplete({
+    source: tempArray,
+    appendTo : "#addDomainModel",
+    select: function() {
+      if(selectedType!='division'){
+        loadDomains('section',$('#inputZone').val(),$('#inputDivision').val(),'-');
+      }
+      }
+  });
+  }
+  if(type == 'section'){
+    $("#inputSection").prop('disabled', false);
+    $("#inputSection").autocomplete({
+    source: tempArray,
+    appendTo : "#addDomainModel"
+  });
+  }
+
+}
+
+function addDomainClick(){
+  if(selectedType == 'zone'){
+    if($('#inputZone').val() == ''){
+      alert('Zone Empty');
+    }else{
+      addDomainTOServer({name:$('#inputZone').val(),type:'zone',zone:'-',division:'-',section:'-'})
+    }
+
+  }else if(selectedType == 'division'){
+    if($('#inputZone').val() == ''){
+      alert('Zone Empty');
+    }else if($('#inputDivision').val() == ''){
+      alert('Division Empty');
+    }
+    else{
+      addDomainTOServer({name:$('#inputDivision').val(),type:'division',zone:$('#inputZone').val(),division:'-',section:'-'})
+    }
+  }else if(selectedType == 'section'){
+    if($('#inputZone').val() == ''){
+      alert('Zone Empty');
+    }else if($('#inputDivision').val() == ''){
+      alert('Division Empty');
+    }
+    else if($('#inputSection').val() == ''){
+      alert('Section Empty');
+    }
+    else{
+      addDomainTOServer({name:$('#inputSection').val(),type:'section',zone:$('#inputZone').val(),division:$('#inputDivision').val(),section:'-'})
+    }
+  }
+
+}
+
+async function addDomainTOServer(data){
+  showPleaseWait();
+  let result = await sendReqToServer('addDomain','POST',data);
+  hidePleaseWait();
+  if(result.status === true){
+    getAllDomainFromServer();  }
+}
+
+async function deleteDomain(id){
+  showPleaseWait();
+  let result = await sendReqToServer('deleteDomain','POST',{id:id});
+  hidePleaseWait();
+  if(result.status === true){
+    getAllDomainFromServer(); }
+}
+
+//document.getElementById(FrameID).contentDocument.location.reload(true);
+
+
+// var availableTags = [
+//     "ActionScript", "AppleScript", "Asp", "BASIC", "C", "C++",
+//     "Clojure", "COBOL", "ColdFusion", "Erlang", "Fortran",
+//     "Groovy", "Haskell", "Java", "JavaScript", "Lisp", "Perl",
+//     "PHP", "Python", "Ruby", "Scala", "Scheme"
+//   ];
+  
+//   $("#inputZone").autocomplete({
+//     source: availableTags,
+//     appendTo : "#addDomainModel"
+//   });
+        //---------SEND DATA TO SERVER-----------//
+function sendReqToServer(route, method, params) {
+	return new Promise((resolve, reject) => {
+		$.ajax({
+			url: url + route,
+			headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'authkey' : 's9f72f0aa3-jos3f-u83b-ic83-w83h6fow9h'
+			},
+			type: method /* or type:"GET" or type:"PUT" */,
+			dataType: 'json',
+			data: params,
+			success: function(result) {
+				resolve(result);
+			},
+			error: function() {
+				reject('error');
+			}
+		});
+	});
+}
+
+function showPleaseWait() {
+	if (document.querySelector('#pleaseWaitDialog') == null) {
+		var modalLoading =
+			'<div class="modal" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false" role="dialog">\
+            <div class="modal-dialog">\
+                <div class="modal-content">\
+                    <div class="modal-header">\
+                        <h4 class="modal-title">Please wait...</h4>\
+                    </div>\
+                    <div class="modal-body">\
+                        <div class="progress">\
+                          <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar"\
+                          aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%; height: 40px">\
+                          </div>\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>\
+        </div>';
+		$(document.body).append(modalLoading);
+	}
+
+	$('#pleaseWaitDialog').modal('show');
+}
+function hidePleaseWait() {
+	$('#pleaseWaitDialog').modal('hide');
+}
+        </script>
+
+     </body>
+</html>

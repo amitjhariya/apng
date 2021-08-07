@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet"></link>
+
+    <title>Device</title>
+  </head>
+  <body>
+
+    <div class="fluid">
+        <div class="float-right mt-3 mb-3 mr-3">
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addDomainModel">Add Device</button>
+        </div>
+        <div class="table-responsive text-nowrap">
+            <!--Table-->
+            <table class="table table-hover table-fixed">
+    
+              <!--Table head-->
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Name</th>
+                  <th>Mobile</th>
+                  <th>Device ID</th>
+                  <th>Domain</th>
+                  <th>Zone</th>
+                  <th>Division</th>
+                  <th>Section</th>
+                  <th>Linked Device</th>
+                </tr>
+              </thead>
+              <!--Table head-->
+    
+              <!--Table body-->
+              <tbody id='tabledata'>
+              </tbody>
+              <!--Table body-->
+
+            </table>
+            <!--Table-->
+          </div>
+    </section>
+
+          <!-- MODAL -->
+          <div id="addDomainModel" class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 id="modalHeading" class="modal-title">Add Device</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    
+                  <div class="container-fluid">
+                  <div class="col-sm-12">
+                    <button id="deleteBtn" onclick="onDeleteBtnClick();" type="button" class="btn btn-danger" >Delete</button>
+                  </div>
+                    <form>
+                        <label id="uid" class="invisible"></label>
+                        <div class="form-row">
+                          <div class="form-group col-md-4">
+                            <label for="inputEmail4">Name</label>
+                            <input type="txet" class="form-control" id="inputName">
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="inputPassword4">Mobile</label>
+                            <input type="number" class="form-control" id="inputMobile">
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="inputPassword4">Device ID</label>
+                            <input type="text" class="form-control" id="inputDeviceId">
+                          </div>
+                        </div>
+                        <div class="form-row">
+                           <div class="form-group col-md-4">
+                            <label for="exampleFormControlSelect1">System Type</label>
+                            <select class="form-control" id="alertType">
+                              <option value = "0">CTRT</option>
+                              <option value = "1">OTRT</option>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="inputEmail4">Station Code</label>
+                            <input type="text" class="form-control" id="inputStationCode">
+                           </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label id='lblZone' class="btn btn-secondary">
+                                  <input type="radio" name="options" id="buttonZone" checked>zone</label>
+                                <label id='lblDivision' class="btn btn-secondary">
+                                  <input type="radio" name="options" id="buttonDivision">division</label>
+                                <label id='lblSection' class="btn btn-secondary">
+                                  <input type="radio" name="options" id="buttonSection">section</label>
+                              </div>
+                              <input id="inputZone" type="text" class="form-control mt-3" placeholder="Zone" aria-label="search" aria-describedby="button-addon2" >
+                        <input id="inputDivision" type="text" class="form-control mt-3" placeholder="Division" aria-label="search" aria-describedby="button-addon2" disabled>
+                        <input id="inputSection" type="text" class="form-control mt-3 mb-3" placeholder="Section" aria-label="search" aria-describedby="button-addon2" disabled>
+                        </div>
+                        <!-- <div class="form-row">
+                          <div class="form-group col-md-4">
+                            <label for="inputEmail4">Alert Number</label>
+                            <input type="txet" class="form-control" id="inputAlertNumber">
+                          </div> -->
+                          <!-- <div class="form-group col-md-4">
+                            <label for="inputPassword4">Alert Type</label>
+                            <input type="text" class="form-control" id="inputAlertType">
+                          </div> -->
+                          <!-- <div class="form-group col-md-4">
+                            <label for="inputPassword4">Min Range</label>
+                            <input type="number" class="form-control" id="inputMinRange">
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="inputPassword4">Max Range</label>
+                            <input type="number" class="form-control" id="inputMaxRange">
+                          </div> -->
+                        <!-- </div> -->
+                      </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button id="saveDetailsBtn" type="button" class="btn btn-primary" onclick="addDeviceClick();">Add Device</button>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+    
+        </div>
+    
+         <!-- LINKED DEVICE MODAL -->
+         <div id="linkedDeviceModal" class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Device Log</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="container-fluid">
+                <div class="col-sm-12">
+                  
+                </div>
+                <div class="table-responsive text-nowrap">
+                  <!--Table-->
+                  <table class="table table-striped">
+          
+                    <!--Table head-->
+                    <thead>
+                      <tr>
+                        <th>No</th>
+                        <th>Name</th>
+                        <th>Uid</th>
+                        <th>Number</th>
+                        <th>Unlink</th>
+                      </tr>
+                    </thead>
+                    <!--Table head-->
+          
+                    <!--Table body-->
+                    <tbody id='logtabledata'>
+                    </tbody>
+                    <!--Table body-->
+      
+                  </table>
+                  <!--Table-->
+                </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+  
+      </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js" ></script>
+
+
+    <script>
+        
+
+       
+            // alert($(this).text())
+
+
+
+
+        //---------PROGRESS DIALOG----------//
+
+let url='http://49.50.67.152:8006/';
+let selectedType = 'zone';
+let isLogView = false;
+$('.btn-group .btn').click(function(){
+            selectedType = $(this).text().toString().trim();
+        });
+
+$('#addDomainModel').on('hidden.bs.modal', function () {
+    $('#inputName').val(''); 
+        $('#inputMobile').val(''); 
+        $('#inputDeviceId').val(''); 
+        $('#inputZone').val(''); 
+        $('#inputDivision').val(''); 
+        $('#inputSection').val(''); 
+        $('#inputStationCode').val('');  
+        // $('#inputAlertNumber').val(''); 
+        // $('#inputMinRange').val(''); 
+        // $('#inputMaxRange').val(''); 
+        $('#modalHeading').text("Add Device");
+        $('#saveDetailsBtn').text('Add Device');
+
+    // $('#inputDivision').val('');
+    // $('#inputSection').val('');
+    $('#lblZone').addClass('active');
+    $("#lblDivision").removeClass("active");
+    $("#lblSection").removeClass("active");
+
+
+  selectedType = 'zone';
+})
+
+//------------LOAD ALL DEVICE----------//
+getAllDeviceFromServer();
+async function getAllDeviceFromServer(){
+  showPleaseWait();
+  let result = await sendReqToServer('getSubDeviceDetails','POST',{key:'privilege',value:"1"});
+  if(result.status === true){
+    loadAllDevice(result.data)  
+  }else{
+    alert(result.message);
+    loadDomains(selectedType,'-','-','-')
+  }
+  hidePleaseWait();
+}
+
+async function onDeleteBtnClick(){
+    if($('#saveDetailsBtn').text() != 'Add Device'){
+        showPleaseWait();
+        let result = await sendReqToServer('deleteDeviceDetails','POST',{uid:$('#uid').val()});
+        if(result.status == true){
+            hidePleaseWait();
+            $('#addDomainModel').modal('hide'); 
+            getAllDeviceFromServer();
+        }else{
+            hidePleaseWait();
+            alert(result.message)
+        }
+    }
+}
+
+function loadAllDevice(val){
+  let tablehtml = '';
+  for(var i = 0; i < val.length; i++) {
+      tablehtml+= `<tr onclick="getSingleDeviceDetails('${val[i].uid}')"><th scope="row">${i+1}</th><td>${val[i].name}</td><td>${val[i].mobile}</td>
+        <td>${val[i].deviceid}</td><td>${val[i].domain}</td><td>${val[i].zone}</td><td>${val[i].division}</td><td>${val[i].section}</td>
+        <td><button type="button" class="btn btn-info" onClick="linkedDevice('${val[i].uid}');"" data-target="#logModal">View</button></td></tr>`;
+  }
+  document.getElementById("tabledata").innerHTML = tablehtml;
+  loadDomains(selectedType,'-','-','-');
+}
+
+$(document).ready(function() {
+  $('.actionButton').click(function() {
+    // Recover data-bean-id tag value
+    var beanId = $(this).data('beanId');
+    
+    // Do whatever you want
+    alert('Bean value:' + beanId)
+  });
+});
+
+
+async function getSingleDeviceDetails(uid){
+  if(!isLogView){
+    showPleaseWait();
+    let result = await sendReqToServer('getSingleDeviceDetails','POST',{uid:uid});
+    if(result.status === true){
+        $('#inputName').val(result.data[0].name); 
+        $('#inputMobile').val(result.data[0].mobile); 
+        $('#inputDeviceId').val(result.data[0].deviceid); 
+        $('#inputZone').val(result.data[0].zone); 
+        $('#inputStationCode').val(result.data[0].stationcode); 
+        $('#inputDivision').val(result.data[0].division); 
+        $('#inputSection').val(result.data[0].section); 
+        $('#uid').val(result.data[0].uid); 
+        $('#modalHeading').text("Update Device Info"); 
+        $('#saveDetailsBtn').text('Update Device');
+        hidePleaseWait();
+        $('#addDomainModel').modal('show'); 
+    }else{
+        hidePleaseWait();
+        alert(result.message);
+    }
+  }
+}
+//-----------LOAD DOMAINS-----------//
+
+async function loadDomains(type,zone,division,section){
+  showPleaseWait();
+  let data = {
+    type:type,
+    zone:zone,
+    division:division,
+    section:section
+  }
+  let result = await sendReqToServer('getDomain','POST',data);
+  if(result.status === true){
+    hidePleaseWait();
+    readDomainData(result.data,type)
+    
+  }else{
+      alert("No Data Found")
+      hidePleaseWait();
+  }
+  
+}
+
+function readDomainData(data,type){
+  var tempArray = [];
+  for(var i = 0; i < data.length; i++) {
+    tempArray.push(data[i].name);
+  }
+  if(type == 'zone'){
+    $("#inputZone").autocomplete({
+    source: tempArray,
+    appendTo : "#addDomainModel",
+    select: function() {
+        if(selectedType!='zone'){
+        loadDomains('division',$('#inputZone').val(),'-','-');
+      }
+      }
+  });
+  }
+  if(type == 'division'){
+    $("#inputDivision").prop('disabled', false);
+    $("#inputDivision").autocomplete({
+    source: tempArray,
+    appendTo : "#addDomainModel",
+    select: function() {
+        if(selectedType!='division'){
+        loadDomains('section',$('#inputZone').val(),$('#inputDivision').val(),'-');
+      }
+      }
+  });
+  }
+  if(type == 'section'){
+    $("#inputSection").prop('disabled', false);
+    $("#inputSection").autocomplete({
+    source: tempArray,
+    appendTo : "#addDomainModel"
+  });
+  }
+
+}
+
+function addDeviceClick(){
+  if($('#inputName').val().toString().trim() == ''){
+      alert('Name is empty.');
+  }else if($('#inputMobile').val().toString().trim() == ''){
+    alert('Mobile is empty.');
+  }else if($('#inputDeviceId').val().toString().trim() == ''){
+    alert('Device ID is empty.');
+  }else if($('#inputZone').val().toString().trim() == ''){
+    alert('Zone is empty.');
+  }else if($('#inputDivision').val().toString().trim() == '' && selectedType == 'division'){
+    alert('Division is empty.');
+  }else if($('#inputSection').val().toString().trim() == '' && selectedType == 'section'){
+    alert('Section is empty.');
+  }else if($('#inputStationCode').val() == ''){
+    alert('Station Code is empty.');
+  }else{
+      let data = {
+          uid:$('#uid').val(),
+          name : $('#inputName').val().toString().trim(),
+          mobile : $('#inputMobile').val().toString().trim(),
+          deviceid : $('#inputDeviceId').val().toString().trim(),
+          zone : $('#inputZone').val().toString().trim(),
+          division : $('#inputDivision').val().toString().trim(),
+          section : $('#inputSection').val().toString().trim(),
+          stationcode : $('#inputStationCode').val().toString().trim(),
+          masteruid : '-',
+          email : '-',
+          privilege : '1',
+          tokenid : '-',
+          domain : selectedType,
+          gatename : '-',
+          status : 'registered',
+          systemtype : $('#alertType :selected').val(),
+          direction : '-',
+          lastreboot : '-',
+          mastermobile : '-',
+          mastername : '-'
+      }
+      if($('#saveDetailsBtn').text() == 'Add Device'){
+          console.log("add");
+        addDeviceTOServer(data);
+      }else{
+        console.log("Update");
+        updateDeviceDataServer(data);
+      } 
+  }
+}
+
+async function addDeviceTOServer(data){
+  showPleaseWait();
+  let result = await sendReqToServer('registerNewDevice','POST',data);
+  hidePleaseWait();
+  console.log(result);
+  if(result.status === true){
+    $('#addDomainModel').modal('hide'); 
+    getAllDeviceFromServer();
+  }
+  else{
+    alert(result.message)
+    }
+}
+
+async function updateDeviceDataServer(data){
+  showPleaseWait();
+  let result = await sendReqToServer('updateDeviceDetails','POST',data);
+  hidePleaseWait();
+  console.log(result);
+  if(result.status === true){
+    $('#addDomainModel').modal('hide'); 
+    getAllDeviceFromServer();
+  }
+  else{
+    alert(result.message)
+    }
+}
+
+//document.getElementById(FrameID).contentDocument.location.reload(true);
+
+//----------LOG-----------//
+async function linkedDevice(uid){
+  isLogView = true;
+  showPleaseWait();
+  let data = {
+    uid:uid,
+  }
+  let result = await sendReqToServer('getLinkedDevice','POST',data);
+  if(result.status === true){
+    hidePleaseWait();
+    isLogView = false;
+
+    if(result.logs.length >0){
+      setLogData(result.logs);
+    }else{
+      alert("No Log")
+    }
+    
+    
+  }else{
+    isLogView = false;
+      alert("No Data Found")
+      hidePleaseWait();
+  }
+  
+}
+
+function setLogData(val){
+  console.log(val);
+  let tablehtml = '';
+  for(var i = 0; i < val.length; i++) {
+        tablehtml+= `<tr><th scope="row">${i+1}</th><td>${val[i].name}</td><td>${val[i].uid}</td>
+          <td>${val[i].mobile}</td><td><button type="button" class="btn btn-info" onClick="unlink('${val[i].uid}');"" data-target="#logModal">Unlink</button></td></tr>`;
+    }
+    document.getElementById("logtabledata").innerHTML = tablehtml;
+    $('#linkedDeviceModal').modal('show'); 
+}
+
+async function unlink(uid){
+  showPleaseWait();
+  let data = {
+    uid:uid,
+  }
+  let result = await sendReqToServer('unlinkDevice','POST',data);
+  if(result.status === true){
+    hidePleaseWait();
+    $('#linkedDeviceModal').modal('hide'); 
+    getAllDeviceFromServer();
+  }else{
+    isLogView = false;
+      alert("No Data Found")
+      hidePleaseWait();
+      
+  }
+  
+}
+//document.getElementById(FrameID).contentDocument.location.reload(true);
+
+        //---------SEND DATA TO SERVER-----------//
+function sendReqToServer(route, method, params) {
+	return new Promise((resolve, reject) => {
+		$.ajax({
+			url: url + route,
+			headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'authkey' : 's9f72f0aa3-jos3f-u83b-ic83-w83h6fow9h'
+			},
+			type: method /* or type:"GET" or type:"PUT" */,
+			dataType: 'json',
+			data: params,
+			success: function(result) {
+				resolve(result);
+			},
+			error: function() {
+				reject('error');
+			}
+		});
+	});
+}
+
+function showPleaseWait() {
+	if (document.querySelector('#pleaseWaitDialog') == null) {
+		var modalLoading =
+			'<div class="modal" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false" role="dialog">\
+            <div class="modal-dialog">\
+                <div class="modal-content">\
+                    <div class="modal-header">\
+                        <h4 class="modal-title">Please wait...</h4>\
+                    </div>\
+                    <div class="modal-body">\
+                        <div class="progress">\
+                          <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar"\
+                          aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%; height: 40px">\
+                          </div>\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>\
+        </div>';
+		$(document.body).append(modalLoading);
+	}
+
+	$('#pleaseWaitDialog').modal('show');
+}
+function hidePleaseWait() {
+	$('#pleaseWaitDialog').modal('hide');
+}
+        </script>
+
+     </body>
+</html>
